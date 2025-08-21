@@ -15,13 +15,12 @@ A Next.js app for sharing and discovering projects. It uses Auth.js (NextAuth) w
 - Tailwind CSS + utility UI components
 - Image proxy endpoint for safer remote image loading
 
-
-
 ## Screenshots
+
 navbar:
 <img width="1733" height="56" alt="projecthub5" src="https://github.com/user-attachments/assets/9b39321a-69ef-44e9-834c-0730c39b4f3e" />
 
-craeterspage:
+creators page:
 <img width="1818" height="916" alt="projecthub3" src="https://github.com/user-attachments/assets/c1b31152-bcf3-4979-bcab-859c940599e1" />
 
 homepage:
@@ -29,7 +28,6 @@ homepage:
 
 create page:
 <img width="1916" height="955" alt="projecthub1" src="https://github.com/user-attachments/assets/36309435-eb02-4ea1-b0c3-2849149b7e8f" />
-
 
 ## Tech Stack
 
