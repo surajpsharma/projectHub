@@ -1,163 +1,142 @@
-# ProjectHub
+# ProjectHub 🚀
 
-A Next.js app for sharing and discovering projects. It uses Auth.js (NextAuth) with GitHub/Google login, MongoDB (Mongoose), Tailwind CSS, and a few custom UI components. Optimized for Vercel deployment.
+ProjectHub is a premium, production-ready project-sharing and discovery platform built for developers, designers, and students to showcase their work, gather constructive feedback, monitor views, and connect with other creators. It combines ideas from Product Hunt, GitHub, and Dev.to into a sleek, responsive workspace.
 
-## Demo
+---
 
-- Production: (add your Vercel URL after deployment)
+## 🛠️ Tech Stack
 
-## Features
+- **Core Framework**: [Next.js 15+](https://nextjs.org/) (App Router, App Directory, Server Actions, Route Handlers)
+- **Runtime Library**: [React 19](https://react.dev/)
+- **Programming Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Database Engine**: [MongoDB](https://www.mongodb.com/) via [Mongoose ORM](https://mongoosejs.com/)
+- **Security & Session Auth**: [Auth.js (NextAuth.js v5 beta)](https://authjs.dev/) (GitHub OAuth & Google OAuth)
+- **Deployment Platform**: [Vercel](https://vercel.com)
 
-- GitHub and Google authentication (Auth.js v5)
-- MongoDB connection with connection caching
-- Project listing, likes, views, and feedback modules
-- App Router (Next.js 15) with API routes
-- Tailwind CSS + utility UI components
-- Image proxy endpoint for safer remote image loading
+---
 
-## Screenshots
+## 💎 Key Features
 
-navbar:
-<img width="1733" height="56" alt="projecthub5" src="https://github.com/user-attachments/assets/9b39321a-69ef-44e9-834c-0730c39b4f3e" />
+- 🔐 **Multi-Provider Authentication**: Secure GitHub and Google login with persistent Mongoose-backed author creation.
+- 🎨 **Theme Toggle Support**: Smooth Light mode, Dark mode, and System mode toggles with page flash prevention (`next-themes`).
+- 🧭 **Advanced Project Discovery**: Browsing route with category tabs, technology filtering, multi-field search queries, and MongoDB aggregate paginated pagination.
+- 📝 **Markdown Detailed Descriptions**: Integration with `@uiw/react-md-editor` for rich submissions, compiled and safely displayed via `markdown-it`.
+- 📊 **Real-time Analytics**: Counter for Project Views deduplicated via cookie hashes (24h lifespan) and interactive Project Likes with optimistic UI updates.
+- 💬 **Constructive Feedback Thread**: Comment feeds supporting star ratings and deletion controls (restricted to comment author or project owner) with `revalidatePath` updates.
+- 📈 **Creator Performance Dashboard**: Visual cards showing total views, total likes, drafts/published projects, recent activities stream, and an interactive CRUD table to view, edit, or delete projects.
+- ⚙️ **Profile Settings**: Update name, bio, public email, avatar, GitHub URL, portfolio URL, and social accounts.
+- 🔍 **SEO & Indexing**: Dynamic page titles, OG/Twitter metadata, dynamic `sitemap.xml` fetching database routes, and `robots.txt` compliance.
 
-creators page:
-<img width="1818" height="916" alt="projecthub3" src="https://github.com/user-attachments/assets/c1b31152-bcf3-4979-bcab-859c940599e1" />
+---
 
-homepage:
-<img width="1912" height="901" alt="projecthub2" src="https://github.com/user-attachments/assets/6eb73c7c-5219-437a-bfc5-6f485e5e5429" />
+## 📐 Architecture & System Flow
 
-create page:
-<img width="1916" height="955" alt="projecthub1" src="https://github.com/user-attachments/assets/36309435-eb02-4ea1-b0c3-2849149b7e8f" />
+```mermaid
+graph TD
+    Client[Client Browser / Theme Toggle]
+    NextApp[Next.js 15 App Router]
+    Auth[Auth.js / NextAuth]
+    ServerActions[Next.js Server Actions]
+    Mongoose[Mongoose ODM]
+    MongoDB[MongoDB Atlas]
 
-## Tech Stack
-
-- Next.js 15 (App Router, TypeScript)
-- React 19
-- Auth.js (NextAuth) v5
-- MongoDB + Mongoose
-- Tailwind CSS
-
-## Getting Started (Local Development)
-
-1. Clone the repo and install dependencies
-
-```bash
-npm install
+    Client -->|HTTP Requests / Search / Filters| NextApp
+    Client -->|Toggle Likes / Feedback / Profile| ServerActions
+    Auth -.->|Validates Session| ServerActions
+    ServerActions -->|Query / Mutate Docs| Mongoose
+    Mongoose -->|Read / Write| MongoDB
 ```
 
-2. Create a `.env.local` file in the project root
+---
 
-```bash
-# Auth.js (NextAuth)
-AUTH_SECRET=replace-with-a-strong-secret
+## 🗄️ Database Structure
 
-# GitHub OAuth (create an OAuth app at https://github.com/settings/developers)
-AUTH_GITHUB_ID=your-github-client-id
-AUTH_GITHUB_SECRET=your-github-client-secret
+### Users / Creators (`Author`)
+- `providerId` (String, Indexed): OAuth provider unique identifier.
+- `provider` (String, enum: github, google): The OAuth source.
+- `name` (String): Display name.
+- `username` (String, Indexed): Slugified URL username.
+- `email` (String, Indexed): User email.
+- `image` (String): Avatar URL.
+- `bio` (String): Short biography.
+- `portfolio` (String): Portfolio link.
+- `github` (String): GitHub profile.
+- `twitter` (String): Twitter profile.
+- `linkedin` (String): LinkedIn profile.
 
-# Google OAuth (create credentials at https://console.cloud.google.com/)
-AUTH_GOOGLE_ID=your-google-client-id
-AUTH_GOOGLE_SECRET=your-google-client-secret
+### Projects (`Project`)
+- `title` (String, Required): Project name.
+- `slug` (String, Unique, Indexed): URL slug.
+- `description` (String, Required): Short description.
+- `category` (String, Required): Project category.
+- `coverImage` (String): Card image.
+- `author` / `creator` (ObjectId, ref: Author, Indexed): Creator reference.
+- `details` (String): Long Markdown description.
+- `views` (Number, Default: 0, Indexed): View count.
+- `likes` (Array of ObjectIds, ref: Author): Likes list.
+- `technologies` (Array of Strings, Indexed): Stack tags.
+- `githubUrl` (String): Repository URL.
+- `liveUrl` (String): Live demo link.
+- `documentationUrl` (String): Documentation link.
+- `screenshots` (Array of Strings): Screenshot image URLs.
+- `status` (String, enum: Draft, Published, Indexed): Visibility status.
 
-# MongoDB
-MONGODB_URI=your-mongodb-connection-string
-MONGODB_DB=your-database-name
+### Feedback & Comments (`Feedback`)
+- `name` (String): Reviewer name.
+- `email` (String): Reviewer email.
+- `message` (String, Required): Review message.
+- `rating` (Number, 1-5): Rating stars.
+- `user` (ObjectId, ref: Author, Indexed): Reviewer author reference.
+- `project` (ObjectId, ref: Project, Indexed): Associated project.
 
-# Optional: for local if needed by your setup
-# AUTH_URL=http://localhost:3000
-```
+---
 
-3. Run the dev server
+## 🚀 Installation & Local Development
 
-```bash
-npm run dev
-```
+### Prerequisites
+- Node.js 18+
+- MongoDB Atlas cluster URL (or local MongoDB database)
 
-4. Open http://localhost:3000
+### Setup Steps
+1. **Clone and Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Environment Variables
+2. **Configure Environment Variables**:
+   Copy `.env.example` into a new file named `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Provide your MongoDB URI credentials and OAuth client secrets.
 
-Required variables used by the app (set in `.env.local` for local, and in Vercel Project Settings for Production/Preview):
+3. **Run Dev server**:
+   Start development compilation with Next.js Turbopack:
+   ```bash
+   npm run dev
+   ```
 
-- AUTH_SECRET
-- AUTH_GITHUB_ID
-- AUTH_GITHUB_SECRET
-- AUTH_GOOGLE_ID
-- AUTH_GOOGLE_SECRET
-- MONGODB_URI
-- MONGODB_DB
+4. **Verify Build**:
+   ```bash
+   npm run build
+   ```
 
-Notes:
+---
 
-- On Vercel, `AUTH_URL` / `NEXTAUTH_URL` is usually inferred. If needed, set it to your production URL.
-- Never commit `.env*` files. They are ignored by `.gitignore`.
+## ⚙️ OAuth Configuration callback URLs
 
-## OAuth Redirect URLs
+Configure callback redirects in your provider settings dashboards:
+- **GitHub OAuth**: `https://<your-app>.vercel.app/api/auth/callback/github`
+- **Google OAuth**: `https://<your-app>.vercel.app/api/auth/callback/google`
 
-After your first deploy to Vercel, configure these in your providers:
+---
 
-- GitHub Authorization callback URL:
+## 🔮 Future Improvements
+- Add collaborative teams or co-author assignments on projects.
+- Integrate direct GitHub API sync to pull repository stats, tags, and commits automatically.
+- Support markdown upload images via Amazon S3 or Cloudinary.
 
-  - `https://<your-app>.vercel.app/api/auth/callback/github`
-
-- Google Authorized redirect URI:
-  - `https://<your-app>.vercel.app/api/auth/callback/google`
-
-If you want auth to work on Preview deployments, you can also add the preview URL patterns later (e.g., `https://<your-app>-git-branch-<user>.vercel.app/...`).
-
-## MongoDB Setup
-
-1. Create a cluster in MongoDB Atlas
-2. Create a database user and get the connection string
-3. Add Network Access rules (allow Vercel to connect; during development you can allow 0.0.0.0/0)
-4. Set `MONGODB_URI` and `MONGODB_DB`
-
-## Project Structure (high level)
-
-```
-app/
-  (root)/
-    page.tsx
-    layout.tsx
-    loading.tsx
-  api/
-    auth/[...nextauth]/route.ts
-    image-proxy/route.ts
-components/
-  ui/
-lib/
-  models/
-  mongodb.ts
-  utils.ts
-```
-
-## Scripts
-
-```bash
-npm run dev     # Start dev server (Turbopack)
-npm run build   # Production build
-npm run start   # Start production server
-npm run lint    # Lint
-```
-
-## Deployment (Vercel)
-
-1. Create a new project in Vercel and import this repository
-2. Add the Environment Variables from above in Vercel Project Settings
-3. Deploy
-4. Configure OAuth callback URLs to your production domain
-
-## Troubleshooting
-
-- 500 on auth callback: Check env variables and exact redirect URLs
-- MongoDB connect errors: Verify URI/DB name and Atlas network access rules
-- Remote images failing: Confirm the target URLs are reachable and correct
-
-## Security
-
-- Do not commit `.env*` files
-- Rotate secrets if they were ever exposed publicly (create new OAuth secrets, change DB password, and update `AUTH_SECRET`)
-
-## License
-
-This project is licensed under the MIT License. See `LICENSE` for details.
+<!-- TASKPLANNER:ATTRIBUTION:START -->
+This project uses [TaskPlanner](https://github.com/smekai/taskplanner) for task planning.
+<!-- TASKPLANNER:ATTRIBUTION:END -->

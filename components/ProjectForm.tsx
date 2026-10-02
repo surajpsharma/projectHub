@@ -1,8 +1,8 @@
 "use client"
 import React, { useActionState, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
-import MDEditor from '@uiw/react-md-editor'
 import { Button } from './ui/button'
 import { formSchema } from '@/lib/validation'
 import { createProject } from '@/lib/action'
@@ -13,6 +13,9 @@ import { Send, Upload, Eye, Code, Tag, FileText, Link, Sparkles } from 'lucide-r
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { SafeImage } from './ui/safe-image'
+
+// Dynamic import to avoid SSR issues with browser-only APIs in @uiw/react-md-editor
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false })
 const ProjectForm = () => {
 
     const { toast } = useToast();

@@ -10,10 +10,18 @@ const AuthorSchema = new Schema(
     image: String,
     bio: String,
     instagram: String,
+    github: String,
+    portfolio: String,
+    twitter: String,
+    linkedin: String,
   },
   { timestamps: { createdAt: "_createdAt", updatedAt: "_updatedAt" } }
 );
 
-export type AuthorDoc = InferSchemaType<typeof AuthorSchema> & { _id: string };
+export type AuthorDoc = InferSchemaType<typeof AuthorSchema> & {
+  _id: string;
+  _createdAt?: Date;
+  _updatedAt?: Date;
+};
 
 export default models.Author || model("Author", AuthorSchema);

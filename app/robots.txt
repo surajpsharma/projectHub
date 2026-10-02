@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://projecthub.vercel.app/sitemap.xml
