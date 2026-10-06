@@ -444,6 +444,14 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ---
 
+## 📫 Connect with me
+
+- **GitHub:** [@surajpsharma](https://github.com/surajpsharma)
+- **Instagram:** [@suraj\_\_sharma\_\_](https://www.instagram.com/__suraj__sharma____)
+- **Email:** [surajsharma030805@gmail.com](mailto:surajsharma030805@gmail.com)
+
+---
+
 <div align="center">
 
 Made with ❤️ by [Suraj Sharma](https://github.com/surajpsharma)
